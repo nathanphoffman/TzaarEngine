@@ -37,17 +37,27 @@ class Piece:
         self.at = Coordinates(x, y)
         self.value = number
         self.color = pieces.is_color(self.piece)
-        self.stack_size = None
-        
+        self._stack_size = None
+
     at: Coordinates
     type: pieces.Piece
     value: int              # this is the value of the piece and includes the stack
     color: pieces.Color
-    stack_size: int
 
     @property
     def stack_size(self) -> int:
-        return self.stack_size
+        if self._stack_size is None:
+            self._stack_size = self.extract_stack_size()
+        return self._stack_size
+
+    def extract_stack_size(self) -> int:
+        abs_val = abs(self.value)
+        if abs_val < 30:
+            return abs_val
+        elif abs_val % 30 == 0:
+            return abs_val // 30
+        else:
+            return abs_val // 31
 
 
 class Position:
@@ -115,7 +125,8 @@ class Position:
     def evaluate_captures(position: Self) -> None:
         # move the piece
         # construct the new board state
-
+        [[-1,0], [0,-1],[1,0],[0,1]]
+        find_capture(position, position.piece.at.x, position.piece.at.y, -1, -1)
         
         return self
     
@@ -135,11 +146,11 @@ class Position:
                 
                 # If a piece is trapped (it has no moves to make) position will be a None value, this is filtered out later on 
                 # For now we just add all possible positions regardless of legal moves to make upstream logic easier to follow
-                if(pieces.is_color(player_color, piece.)):
+                if(pieces.is_color(player_color, piece.value)):
                     self.captures.extend(*Position(copy.deepcopy(self.board), x, y).evaluate_captures())
                     self.stacks.extend(*Position(copy.deepcopy(self.board), x, y).evaluate_stacks())
                     
-                elif(pieces.is_color(enemy_color)):
+                elif(pieces.is_color(enemy_color, piece.value)):
                     self.enemy_captures.extend(*Position(copy.deepcopy(self.board), x, y).evaluate_captures())
                     self.enemy_stacks.extend(*Position(copy.deepcopy(self.board), x, y).evaluate_stacks())
         
