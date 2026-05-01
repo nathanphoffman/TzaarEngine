@@ -1,0 +1,2 @@
+- [Piece value encoding decision](project_piece_encoding.md) — planned change to TZARRA=16, TZAAR=50 for clean stack height encoding
+- [Development roadmap](project_roadmap.md) — 6-step plan from game engine to AlphaZero-style AI

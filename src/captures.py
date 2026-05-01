@@ -5,11 +5,20 @@ from .position import Coordinates, Move
 from .scoring import calculate_value_of_color
 import math
 
+
+def captureInvalid(arr, row, column):
+    space_is_empty = arr[row][column] == pieces.BLANK;
+    space_is_outside_board = arr[row][column] == pieces.VOID;
+    space_is_blocked_middle = arr[row][column] == pieces.MIDDLE;
+
+    if(space_is_empty or space_is_outside_board or space_is_blocked_middle):
+        return True
+
 def captures_from_position(arr, row, column, row_direction, column_direction, attacker = 0, capture_possibilities = []):
     
-    if arr[row][column] == pieces.BLANK or arr[row][column] == pieces.VOID or arr[row][column] == pieces.MIDDLE:
-        return []
-    
+    if captureInvalid(arr, row, column):
+        return [];
+
     if attacker == 0:
         attacker = arr[row][column]
     

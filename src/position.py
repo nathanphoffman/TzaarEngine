@@ -35,12 +35,20 @@ class Piece:
     
     def __init__(self: Self, x: int, y: int, number) -> None:
         self.at = Coordinates(x, y)
-        self.number = number
+        self.value = number
         self.color = pieces.is_color(self.piece)
+        self.stack_size = None
         
     at: Coordinates
-    number: pieces.Piece
+    type: pieces.Piece
+    value: int              # this is the value of the piece and includes the stack
     color: pieces.Color
+    stack_size: int
+
+    @property
+    def stack_size(self) -> int:
+        return self.stack_size
+
 
 class Position:
     
@@ -95,7 +103,7 @@ class Position:
         new_y = y + y_direction
         
         # move further on the line to see if a piece is capturable
-        if(self.move_empty(new_x, new_y)):
+        if(self.empty_move(new_x, new_y)):
             return self.find_capture(new_x, new_y, x_direction, y_direction)
         
         elif(self.move_valid(new_x, new_y)):
@@ -127,7 +135,7 @@ class Position:
                 
                 # If a piece is trapped (it has no moves to make) position will be a None value, this is filtered out later on 
                 # For now we just add all possible positions regardless of legal moves to make upstream logic easier to follow
-                if(pieces.is_color(player_color, piece.color)):
+                if(pieces.is_color(player_color, piece.)):
                     self.captures.extend(*Position(copy.deepcopy(self.board), x, y).evaluate_captures())
                     self.stacks.extend(*Position(copy.deepcopy(self.board), x, y).evaluate_stacks())
                     
